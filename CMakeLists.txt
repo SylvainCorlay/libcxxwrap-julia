@@ -40,7 +40,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunused-parameter -Wextra -Wreorder")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-DJULIA_ENABLE_THREADING)
 
@@ -73,6 +73,7 @@ set(JLCXX_HEADERS
     ${JLCXX_INCLUDE_DIR}/jlcxx/jlcxx.hpp
     ${JLCXX_INCLUDE_DIR}/jlcxx/jlcxx_config.hpp
     ${JLCXX_INCLUDE_DIR}/jlcxx/functions.hpp
+    ${JLCXX_INCLUDE_DIR}/jlcxx/meta.hpp
     ${JLCXX_INCLUDE_DIR}/jlcxx/module.hpp
     ${JLCXX_INCLUDE_DIR}/jlcxx/smart_pointers.hpp
     ${JLCXX_INCLUDE_DIR}/jlcxx/stl.hpp
@@ -146,8 +147,8 @@ set_property(TARGET ${JLCXX_TARGET} APPEND PROPERTY
   COMPATIBLE_INTERFACE_STRING ${JLCXX_TARGET}_MAJOR_VERSION
 )
 target_compile_definitions(${JLCXX_TARGET} PUBLIC "JULIA_ENABLE_THREADING")
-target_compile_features(${JLCXX_TARGET} PUBLIC cxx_std_17)
-target_compile_features(${JLCXX_STL_TARGET} PUBLIC cxx_std_17)
+target_compile_features(${JLCXX_TARGET} PUBLIC cxx_std_14)
+target_compile_features(${JLCXX_STL_TARGET} PUBLIC cxx_std_14)
 
 generate_export_header(${JLCXX_TARGET})
 

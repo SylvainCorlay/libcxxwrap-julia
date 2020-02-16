@@ -201,7 +201,7 @@ namespace detail
 
 // By default, fundamental and "POD" types are mapped directly
 template<typename T>
-struct IsMirroredType : std::bool_constant<(!std::is_class<T>::value || (std::is_standard_layout<T>::value && std::is_trivial<T>::value)) && !IsSmartPointerType<T>::value>
+struct IsMirroredType : mpl::bool_constant<(!std::is_class<T>::value || (std::is_standard_layout<T>::value && std::is_trivial<T>::value)) && !IsSmartPointerType<T>::value>
 {
 };
 

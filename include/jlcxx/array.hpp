@@ -1,6 +1,7 @@
 ﻿#ifndef JLCXX_ARRAY_HPP
 #define JLCXX_ARRAY_HPP
 
+#include "meta.hpp"
 #include "type_conversion.hpp"
 #include "tuple.hpp"
 
@@ -217,26 +218,24 @@ public:
 
   ValueT& operator[](const std::size_t i)
   {
-    if constexpr(std::is_same<julia_t, ValueT>::value)
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([&](auto self)
     {
-      return data()[i];
-    }
-    else
+      return self(*this).data()[i];
+    }, /*else*/ [&](auto self)
     {
-      return *extract_pointer_nonull<ValueT>(data()[i]);
-    }
+      return *extract_pointer_nonull<ValueT>(self(*this).data()[i]);
+    });
   }
 
   const ValueT& operator[](const std::size_t i) const
   {
-    if constexpr(std::is_same<julia_t, ValueT>::value)
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([&](auto self)
     {
-      return data()[i];
-    }
-    else
+      return self(*this).data()[i];
+    }, /*else*/ [&](auto self)
     {
-      return *extract_pointer_nonull<ValueT>(data()[i]);
-    }
+      return *extract_pointer_nonull<ValueT>(self(*this).data()[i]);
+    });
   }
 
   jl_array_t* m_array;

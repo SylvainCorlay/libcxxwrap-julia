@@ -10,6 +10,7 @@
 #include <typeinfo>
 #include <vector>
 
+#include "meta.hpp"
 #include "array.hpp"
 #include "type_conversion.hpp"
 
@@ -478,13 +479,13 @@ using fixed_int_types = remove_duplicates<ParameterList
 
 /// Trait to allow user-controlled disabling of the default constructor
 template <typename T>
-struct DefaultConstructible : std::bool_constant<std::is_default_constructible<T>::value && !std::is_abstract<T>::value>
+struct DefaultConstructible : mpl::bool_constant<std::is_default_constructible<T>::value && !std::is_abstract<T>::value>
 {
 };
 
 /// Trait to allow user-controlled disabling of the copy constructor
 template <typename T>
-struct CopyConstructible : std::bool_constant<std::is_copy_constructible<T>::value && !std::is_abstract<T>::value>
+struct CopyConstructible : mpl::bool_constant<std::is_copy_constructible<T>::value && !std::is_abstract<T>::value>
 {
 };
 
@@ -655,7 +656,7 @@ private:
   template<typename T>
   void add_copy_constructor(jl_datatype_t*)
   {
-    if constexpr (CopyConstructible<T>::value)
+    mpl::static_if<CopyConstructible<T>::value>([&](auto)
     {
       set_override_module(jl_base_module);
       method("deepcopy_internal", [this](const T& other, ObjectIdDict)
@@ -663,7 +664,7 @@ private:
         return create<T>(other);
       });
       unset_override_module();
-    }
+    }, /*else*/ [](auto) {});
   }
 
   template<typename T, typename SuperParametersT, typename JLSuperT>
@@ -693,10 +694,10 @@ private:
 template<typename T>
 void Module::add_default_constructor(jl_datatype_t* dt)
 {
-  if constexpr (DefaultConstructible<T>::value)
+  mpl::static_if<DefaultConstructible<T>::value>([&](auto self)
   {
-    this->constructor<T>(dt);
-  }
+    self(*this).template constructor<T>(dt);
+  }, /*else*/ [](auto) {});
 }
 
 // Specialize this to build the correct parameter list, wrapping non-types in integral constants

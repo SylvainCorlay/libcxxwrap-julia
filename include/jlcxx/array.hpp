@@ -218,23 +218,23 @@ public:
 
   ValueT& operator[](const std::size_t i)
   {
-    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto) -> ValueT&
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto self) -> ValueT&
     {
-      return this->data()[i];
-    }, /*else*/ [this, i](auto) -> ValueT&
+      return self(*this).data()[i];
+    }, /*else*/ [this, i](auto self) -> ValueT&
     {
-      return *extract_pointer_nonull<ValueT>(this->data()[i]);
+      return *extract_pointer_nonull<ValueT>(self(*this).data()[i]);
     });
   }
 
   const ValueT& operator[](const std::size_t i) const
   {
-    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto) -> const ValueT&
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto self) -> const ValueT&
     {
-      return this->data()[i];
-    }, /*else*/ [this, i](auto) -> const ValueT&
+      return self(*this).data()[i];
+    }, /*else*/ [this, i](auto self) -> const ValueT&
     {
-      return *extract_pointer_nonull<ValueT>(this->data()[i]);
+      return *extract_pointer_nonull<ValueT>(self(*this).data()[i]);
     });
   }
 

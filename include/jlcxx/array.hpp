@@ -218,26 +218,24 @@ public:
 
   ValueT& operator[](const std::size_t i)
   {
-    if constexpr(std::is_same<julia_t, ValueT>::value)
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto) -> ValueT&
     {
-      return data()[i];
-    }
-    else
+      return this->data()[i];
+    }, /*else*/ [this, i](auto) -> ValueT&
     {
-      return *extract_pointer_nonull<ValueT>(data()[i]);
-    }
+      return *extract_pointer_nonull<ValueT>(this->data()[i]);
+    });
   }
 
   const ValueT& operator[](const std::size_t i) const
   {
-    if constexpr(std::is_same<julia_t, ValueT>::value)
+    mpl::static_if<std::is_same<julia_t, ValueT>::value>([this, i](auto) -> const ValueT&
     {
-      return data()[i];
-    }
-    else
+      return this->data()[i];
+    }, /*else*/ [this, i](auto) -> const ValueT&
     {
-      return *extract_pointer_nonull<ValueT>(data()[i]);
-    }
+      return *extract_pointer_nonull<ValueT>(this->data()[i]);
+    });
   }
 
   jl_array_t* m_array;

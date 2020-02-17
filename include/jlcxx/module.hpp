@@ -656,7 +656,7 @@ private:
   template<typename T>
   void add_copy_constructor(jl_datatype_t*)
   {
-    mpl::static_if<CopyConstructible<T>::value>([&](auto)
+    if constexpr (CopyConstructible<T>::value)
     {
       set_override_module(jl_base_module);
       method("deepcopy_internal", [this](const T& other, ObjectIdDict)
@@ -664,7 +664,7 @@ private:
         return create<T>(other);
       });
       unset_override_module();
-    }, /*else*/ [](auto) {});
+    }
   }
 
   template<typename T, typename SuperParametersT, typename JLSuperT>
@@ -694,10 +694,10 @@ private:
 template<typename T>
 void Module::add_default_constructor(jl_datatype_t* dt)
 {
-  mpl::static_if<DefaultConstructible<T>::value>([&](auto self)
+  if constexpr (DefaultConstructible<T>::value)
   {
-    self(*this).template constructor<T>(dt);
-  }, /*else*/ [](auto) {});
+    this->constructor<T>(dt);
+  }
 }
 
 // Specialize this to build the correct parameter list, wrapping non-types in integral constants

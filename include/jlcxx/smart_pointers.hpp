@@ -207,11 +207,10 @@ struct julia_type_factory<T, CxxWrappedTrait<SmartPointerTrait>>
     using PointeeT = typename detail::get_pointee<T>::pointee_t;
     using MappedT = typename detail::get_pointee<T>::pointer_t;
     create_if_not_exists<PointeeT>();
-
-    mpl::static_if<!std::is_same<supertype<PointeeT>, PointeeT>::value>([&](auto self)
+    if constexpr(!std::is_same<supertype<PointeeT>, PointeeT>::value)
     {
       create_if_not_exists<typename smartptr::ConvertToBase<MappedT>::SuperPtrT>();
-    }, /*else*/ [](auto) {});
+    }
     if(has_julia_type<MappedT>())
     {
       assert((std::is_same<T, typename detail::get_pointee<T>::const_pointer_t>::value));
